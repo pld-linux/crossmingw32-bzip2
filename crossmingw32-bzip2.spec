@@ -7,26 +7,23 @@ Summary(pt_BR):	Compactador de arquivo extremamente poderoso
 Summary(uk):	Компресор файл╕в на баз╕ алгоритму блочного сортування
 Summary(ru):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
-Version:	1.0.1
+Version:	1.0.2
 Release:	1
 License:	BSD-like
 Group:		Applications/Archiving
-Source0:	ftp://sources.redhat.com/pub/bzip2/v100/%{realname}-%{version}.tar.gz
-Patch0:		crossmingw32-bzip2.patch
+Source0:	ftp://sources.redhat.com/pub/bzip2/v102/%{realname}-%{version}.tar.gz
+# Source0-md5:	ee76864958d568677f03db8afad92beb
+Patch0:		%{name}.patch
 URL:		http://sources.redhat.com/bzip2/
-BuildRequires:	autoconf
-BuildRequires:	automake
 BuildRequires:	crossmingw32-gcc
-BuildRequires:	libtool
-BuildRoot:	%{tmpdir}/%{realname}-%{version}-root-%(id -u -n)
+Requires:	crossmingw32-runtime
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		no_install_post_strip	1
 
 %define		target			i386-mingw32
 %define		target_platform 	i386-pc-mingw32
 %define		arch			%{_prefix}/%{target}
-%define		gccarch			%{_prefix}/lib/gcc-lib/%{target}
-%define		gcclib			%{_prefix}/lib/gcc-lib/%{target}/%{version}
 
 %define		__cc			%{target}-gcc
 %define		__cxx			%{target}-g++
@@ -87,30 +84,29 @@ bzip2 компресу╓ файли використовуючи текстовий алгоритм блочного
 %patch0 -p1
 
 %build
-CC=%{target}-gcc ; export CC
-CXX=%{target}-g++ ; export CXX
-LD=%{target}-ld ; export LD
-AR=%{target}-ar ; export AR
-AS=%{target}-as ; export AS
-CROSS_COMPILE=1 ; export CROSS_COMPILE
-CPPFLAGS="-I%{arch}/include" ; export CPPFLAGS
-RANLIB=%{target}-ranlib ; export RANLIB
-CFLAGS="-I%{arch}/include -D_WIN32" ; export CFLAGS
-
-%{__make}
+%{__make} \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -Wall \$(BIGFILES)"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT%{arch}/bin
-
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	PREFIX=$RPM_BUILD_ROOT%{arch}
-cp libbz2.dll $RPM_BUILD_ROOT%{arch}/bin
+
+install libbz2.dll $RPM_BUILD_ROOT%{arch}/bin
+
+%if 0%{!?debug:1}
+%{target}-strip --strip-unneeded -R.comment -R.note $RPM_BUILD_ROOT%{arch}/bin/*.dll
+%{target}-strip -g -R.comment -R.note $RPM_BUILD_ROOT%{arch}/lib/*.a
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%{arch}
+%defattr(644,root,root,755)
+%{arch}/bin/libbz2.dll
+%{arch}/lib/libbz2.a
+%{arch}/include/bzlib.h
