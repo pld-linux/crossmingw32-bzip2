@@ -8,7 +8,7 @@ Summary(uk):	Компресор файл╕в на баз╕ алгоритму блочного сортування
 Summary(ru):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
 Version:	1.0.2
-Release:	1
+Release:	2
 License:	BSD-like
 Group:		Applications/Archiving
 Source0:	ftp://sources.redhat.com/pub/bzip2/v102/%{realname}-%{version}.tar.gz
@@ -83,34 +83,66 @@ bzip2 компресу╓ файли використовуючи текстовий алгоритм блочного
 розповсюджен╕ компресори на баз╕ LZ77/LZ78 ╕ наближа╓ться до то╖, що
 ╖╖ забезпечу╓ с╕мейство статистичних компресор╕в PPM.
 
+%package dll
+Summary:	%{realname} - DLL library for Windows
+Summary(pl):	%{realname} - biblioteka DLL dla Windows
+Group:		Applications/Emulators
+
+%description dll
+%{realname} - DLL library for Windows.
+
+%description dll -l pl
+%{realname} - biblioteka DLL dla Windows.
+
 %prep
 %setup -q -n %{realname}-%{version}
 %patch0 -p1
 
 %build
+CC=%{target}-gcc ; export CC
+CXX=%{target}-g++ ; export CXX
+LD=%{target}-ld ; export LD
+AR=%{target}-ar ; export AR
+AS=%{target}-as ; export AS
+CROSS_COMPILE=1 ; export CROSS_COMPILE
+CPPFLAGS="-I%{arch}/include" ; export CPPFLAGS
+RANLIB=%{target}-ranlib ; export RANLIB
+LDSHARED="%{target}-gcc -shared" ; export LDSHARED
+TARGET="%{target}" ; export TARGET
+
 %{__make} \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -Wall \$(BIGFILES)"
 
-%install
-rm -rf $RPM_BUILD_ROOT
+rm -f libbz2.a libbz2.dll
 
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT \
-	PREFIX=$RPM_BUILD_ROOT%{arch}
+$AR cru libbzip2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
+$RANLIB libbzip2.a
 
-install libbz2.dll $RPM_BUILD_ROOT%{arch}/bin
+%{__cc} --shared libbzip2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o -Wl,--enable-auto-image-base -o bzip2.dll -Wl,--out-implib,libbzip2.dll.a
 
 %if 0%{!?debug:1}
-%{target}-strip --strip-unneeded -R.comment -R.note $RPM_BUILD_ROOT%{arch}/bin/*.dll
-%{target}-strip -g -R.comment -R.note $RPM_BUILD_ROOT%{arch}/lib/*.a
+%{target}-strip *.dll
+%{target}-strip -g -R.comment -R.note *.a
 %endif
+
+%install
+rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{arch}/{include,lib}
+install -d $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
+
+install *.h $RPM_BUILD_ROOT%{arch}/include
+install *.a $RPM_BUILD_ROOT%{arch}/lib
+install *.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{arch}/bin/libbz2.dll
-%{arch}/lib/libbz2.a
-%{arch}/include/bzlib.h
+%{arch}/include/*
+%{arch}/lib/*
+
+%files dll
+%defattr(644,root,root,755)
+%{_datadir}/wine/windows/system/*
