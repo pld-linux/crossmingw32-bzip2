@@ -1,8 +1,8 @@
 %define		realname		bzip2
-Summary:	Extremely powerful file compression utility
+Summary:	Extremely powerful file compression utility - Ming32 cross version
 Summary(es):	Un compresor de archivos con un nuevo algoritmo
 Summary(fr):	Utilitaire de compression de fichier extrЙmement puissant
-Summary(pl):	Kompresor plikСw bzip2
+Summary(pl):	Kompresor plikСw bzip2 - wersja skro╤na dla Ming32
 Summary(pt_BR):	Compactador de arquivo extremamente poderoso
 Summary(uk):	Компресор файл╕в на баз╕ алгоритму блочного сортування
 Summary(ru):	Компрессор файлов на основе алгоритма блочной сортировки
@@ -16,6 +16,7 @@ Patch0:		crossmingw32-bzip2.patch
 URL:		http://sources.redhat.com/bzip2/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	crossmingw32-gcc
 BuildRequires:	libtool
 BuildRoot:	%{tmpdir}/%{realname}-%{version}-root-%(id -u -n)
 
