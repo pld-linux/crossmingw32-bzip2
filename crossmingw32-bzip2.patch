@@ -65,21 +65,9 @@ diff -uNr bzip2-1.0.1/libbz2.def bzip2-1.0.1.good/libbz2.def
 +	BZ2_bzflush@4
 +	BZ2_bzclose@4
 +	BZ2_bzerror@8
-diff -uNr bzip2-1.0.1/Makefile bzip2-1.0.1.good/Makefile
---- bzip2-1.0.1/Makefile	2000-06-23 22:34:47.000000000 +0200
-+++ bzip2-1.0.1.good/Makefile	2003-08-27 16:21:27.380288320 +0200
-@@ -1,8 +1,8 @@
- 
- SHELL=/bin/sh
--CC=gcc
-+CC=i386-mingw32-gcc
- BIGFILES=-D_FILE_OFFSET_BITS=64
--CFLAGS=-Wall -Winline -O2 -fomit-frame-pointer -fno-strength-reduce $(BIGFILES)
-+CFLAGS=-I/usr/i386-mingw32/include -Wall -Winline -O2 -fomit-frame-pointer -fno-strength-reduce $(BIGFILES) -D_WIN32
- 
- OBJS= blocksort.o  \
-       huffman.o    \
-@@ -12,7 +12,7 @@
+--- bzip2-1.0.2/Makefile.orig	2002-01-26 00:34:53.000000000 +0100
++++ bzip2-1.0.2/Makefile	2003-12-01 23:22:57.502761240 +0100
+@@ -23,7 +23,7 @@
        decompress.o \
        bzlib.o
  
@@ -87,27 +75,18 @@ diff -uNr bzip2-1.0.1/Makefile bzip2-1.0.1.good/Makefile
 +all: libbz2.a bzip2 bzip2recover
  
  bzip2: libbz2.a bzip2.o
- 	$(CC) $(CFLAGS) -o bzip2 bzip2.o -L. -lbz2
-@@ -22,12 +22,7 @@
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2 bzip2.o -L. -lbz2
+@@ -33,12 +33,7 @@
  
  libbz2.a: $(OBJS)
  	rm -f libbz2.a
--	ar cq libbz2.a $(OBJS)
--	@if ( test -f /usr/bin/ranlib -o -f /bin/ranlib -o \
--		-f /usr/ccs/bin/ranlib ) ; then \
--		echo ranlib libbz2.a ; \
--		ranlib libbz2.a ; \
+-	$(AR) cq libbz2.a $(OBJS)
+-	@if ( test -f $(RANLIB) -o -f /usr/bin/ranlib -o \
+-		-f /bin/ranlib -o -f /usr/ccs/bin/ranlib ) ; then \
+-		echo $(RANLIB) libbz2.a ; \
+-		$(RANLIB) libbz2.a ; \
 -	fi
 +	i386-mingw32-dllwrap --def libbz2.def --implib libbz2.a -o libbz2.dll $(OBJS)
  
+ check: test
  test: bzip2
- 	@cat words1
-@@ -69,7 +64,7 @@
- 	chmod a+r $(PREFIX)/lib/libbz2.a
- 
- clean: 
--	rm -f *.o libbz2.a bzip2 bzip2recover \
-+	rm -f *.o libbz2.dll libbz2.a bzip2.exe bzip2recover.exe \
- 	sample1.rb2 sample2.rb2 sample3.rb2 \
- 	sample1.tst sample2.tst sample3.tst
- 
