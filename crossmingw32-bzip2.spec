@@ -1,11 +1,11 @@
 %define		realname		bzip2
 Summary:	Extremely powerful file compression utility - Ming32 cross version
-Summary(es.UTF-8):   Un compresor de archivos con un nuevo algoritmo
-Summary(fr.UTF-8):   Utilitaire de compression de fichier extrêmement puissant
-Summary(pl.UTF-8):   Kompresor plików bzip2 - wersja skrośna dla Ming32
-Summary(pt_BR.UTF-8):   Compactador de arquivo extremamente poderoso
-Summary(uk.UTF-8):   Компресор файлів на базі алгоритму блочного сортування
-Summary(ru.UTF-8):   Компрессор файлов на основе алгоритма блочной сортировки
+Summary(es.UTF-8):	Un compresor de archivos con un nuevo algoritmo
+Summary(fr.UTF-8):	Utilitaire de compression de fichier extrêmement puissant
+Summary(pl.UTF-8):	Kompresor plików bzip2 - wersja skrośna dla Ming32
+Summary(pt_BR.UTF-8):	Compactador de arquivo extremamente poderoso
+Summary(uk.UTF-8):	Компресор файлів на базі алгоритму блочного сортування
+Summary(ru.UTF-8):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
 Version:	1.0.2
 Release:	2
@@ -85,7 +85,7 @@ bzip2 компресує файли використовуючи текстов�
 
 %package dll
 Summary:	%{realname} - DLL library for Windows
-Summary(pl.UTF-8):   %{realname} - biblioteka DLL dla Windows
+Summary(pl.UTF-8):	%{realname} - biblioteka DLL dla Windows
 Group:		Applications/Emulators
 
 %description dll
