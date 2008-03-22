@@ -7,14 +7,14 @@ Summary(pt_BR.UTF-8):	Compactador de arquivo extremamente poderoso
 Summary(uk.UTF-8):	Компресор файлів на базі алгоритму блочного сортування
 Summary(ru.UTF-8):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
-Version:	1.0.2
-Release:	2
+Version:	1.0.5
+Release:	1
 License:	BSD-like
 Group:		Applications/Archiving
-Source0:	ftp://sources.redhat.com/pub/bzip2/v102/%{realname}-%{version}.tar.gz
-# Source0-md5:	ee76864958d568677f03db8afad92beb
+Source0:	http://www.bzip.org/%{version}/%{realname}-%{version}.tar.gz
+# Source0-md5:	3c15a0c8d1d3ee1c46a1634d00617b1a
 Patch0:		%{name}.patch
-URL:		http://sources.redhat.com/bzip2/
+URL:		http://www.bzip.org/
 BuildRequires:	crossmingw32-gcc
 Requires:	crossmingw32-runtime
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -23,12 +23,16 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		target			i386-mingw32
 %define		target_platform 	i386-pc-mingw32
-%define		arch			%{_prefix}/%{target}
 
+%define		_sysprefix		/usr
+%define		_prefix			%{_sysprefix}/%{target}
+%define		_libdir			%{_prefix}/lib
+%define		_dlldir			/usr/share/wine/windows/system
 %define		__cc			%{target}-gcc
 %define		__cxx			%{target}-g++
 
-%ifarch alpha sparc sparc64 sparcv9
+%ifnarch %{ix86}
+# arch-specific flags (like alpha's -mieee) are not valid for i386 gcc
 %define		optflags	-O2
 %endif
 
@@ -83,6 +87,18 @@ bzip2 компресує файли використовуючи текстов�
 розповсюджені компресори на базі LZ77/LZ78 і наближається до тої, що
 її забезпечує сімейство статистичних компресорів PPM.
 
+%package static
+Summary:	Static bzip2 library (cross mingw32 version)
+Summary(pl.UTF-8):	Statyczna biblioteka bzip2 (wersja skrośna mingw32)
+Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description static
+Static bzip2 library (cross mingw32 version).
+
+%description static -l pl.UTF-8
+Statyczna biblioteka bzip2 (wersja skrośna mingw32).
+
 %package dll
 Summary:	%{realname} - DLL library for Windows
 Summary(pl.UTF-8):	%{realname} - biblioteka DLL dla Windows
@@ -99,18 +115,12 @@ Group:		Applications/Emulators
 %patch0 -p1
 
 %build
-CC=%{target}-gcc ; export CC
-CXX=%{target}-g++ ; export CXX
-LD=%{target}-ld ; export LD
-AR=%{target}-ar ; export AR
-AS=%{target}-as ; export AS
-CROSS_COMPILE=1 ; export CROSS_COMPILE
-CPPFLAGS="-I%{arch}/include" ; export CPPFLAGS
-RANLIB=%{target}-ranlib ; export RANLIB
-LDSHARED="%{target}-gcc -shared" ; export LDSHARED
-TARGET="%{target}" ; export TARGET
+AR=%{target}-ar
+RANLIB=%{target}-ranlib
 
 %{__make} \
+	AR="$AR" \
+	RANLIB="$RANLIB" \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -Wall \$(BIGFILES)"
 
@@ -121,28 +131,31 @@ $RANLIB libbzip2.a
 
 %{__cc} --shared libbzip2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o -Wl,--enable-auto-image-base -o bzip2.dll -Wl,--out-implib,libbzip2.dll.a
 
-%if 0%{!?debug:1}
-%{target}-strip *.dll
-%{target}-strip -g -R.comment -R.note *.a
-%endif
-
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{arch}/{include,lib}
-install -d $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir},%{_dlldir}}
 
-install *.h $RPM_BUILD_ROOT%{arch}/include
-install *.a $RPM_BUILD_ROOT%{arch}/lib
-install *.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
+install *.h $RPM_BUILD_ROOT%{_includedir}
+install *.a $RPM_BUILD_ROOT%{_libdir}
+install *.dll $RPM_BUILD_ROOT%{_dlldir}
+
+%if 0%{!?debug:1}
+%{target}-strip $RPM_BUILD_ROOT%{_dlldir}/*.dll
+%{target}-strip -g -R.comment -R.note $RPM_BUILD_ROOT%{_libdir}/*.a
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{arch}/include/*
-%{arch}/lib/*
+%{_libdir}/libbzip2.dll.a
+%{_includedir}/bzlib*.h
+
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/libbzip2.a
 
 %files dll
 %defattr(644,root,root,755)
-%{_datadir}/wine/windows/system/*
+%{_dlldir}/bzip2.dll
