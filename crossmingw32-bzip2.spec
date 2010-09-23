@@ -1,18 +1,18 @@
 %define		realname		bzip2
-Summary:	Extremely powerful file compression utility - Ming32 cross version
+Summary:	Extremely powerful file compression utility - MinGW32 cross version
 Summary(es.UTF-8):	Un compresor de archivos con un nuevo algoritmo
 Summary(fr.UTF-8):	Utilitaire de compression de fichier extrêmement puissant
-Summary(pl.UTF-8):	Kompresor plików bzip2 - wersja skrośna dla Ming32
+Summary(pl.UTF-8):	Kompresor plików bzip2 - wersja skrośna dla MinGW32
 Summary(pt_BR.UTF-8):	Compactador de arquivo extremamente poderoso
 Summary(uk.UTF-8):	Компресор файлів на базі алгоритму блочного сортування
 Summary(ru.UTF-8):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
-Version:	1.0.5
+Version:	1.0.6
 Release:	1
 License:	BSD-like
 Group:		Applications/Archiving
 Source0:	http://www.bzip.org/%{version}/%{realname}-%{version}.tar.gz
-# Source0-md5:	3c15a0c8d1d3ee1c46a1634d00617b1a
+# Source0-md5:	00b516f4704d4a7cb50a1d97e6e8e15b
 Patch0:		%{name}.patch
 URL:		http://www.bzip.org/
 BuildRequires:	crossmingw32-gcc
@@ -88,16 +88,16 @@ bzip2 компресує файли використовуючи текстов�
 її забезпечує сімейство статистичних компресорів PPM.
 
 %package static
-Summary:	Static bzip2 library (cross mingw32 version)
-Summary(pl.UTF-8):	Statyczna biblioteka bzip2 (wersja skrośna mingw32)
+Summary:	Static bzip2 library (cross MinGW32 version)
+Summary(pl.UTF-8):	Statyczna biblioteka bzip2 (wersja skrośna MinGW32)
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description static
-Static bzip2 library (cross mingw32 version).
+Static bzip2 library (cross MinGW32 version).
 
 %description static -l pl.UTF-8
-Statyczna biblioteka bzip2 (wersja skrośna mingw32).
+Statyczna biblioteka bzip2 (wersja skrośna MinGW32).
 
 %package dll
 Summary:	%{realname} - DLL library for Windows
