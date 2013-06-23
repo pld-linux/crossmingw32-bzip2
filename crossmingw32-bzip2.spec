@@ -8,7 +8,7 @@ Summary(uk.UTF-8):	Компресор файлів на базі алгорит�
 Summary(ru.UTF-8):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
 Version:	1.0.6
-Release:	1
+Release:	2
 License:	BSD-like
 Group:		Applications/Archiving
 Source0:	http://www.bzip.org/%{version}/%{realname}-%{version}.tar.gz
@@ -124,12 +124,14 @@ RANLIB=%{target}-ranlib
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -Wall \$(BIGFILES)"
 
-rm -f libbz2.a libbz2.dll
+# makefile made libbz2.a as DLL import library...
+# recreate libbz2.dll.a as import library and libbz2.a as static
+%{__rm} libbz2.a libbz2.dll
 
-$AR cru libbzip2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
-$RANLIB libbzip2.a
-
-%{__cc} --shared libbzip2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o -Wl,--enable-auto-image-base -o bzip2.dll -Wl,--out-implib,libbzip2.dll.a
+OBJS="blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o"
+$AR cru libbz2.a $OBJS
+$RANLIB libbz2.a
+%{target}-dllwrap --def libbz2.def --implib libbz2.dll.a -o bzip2.dll $OBJS
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -144,16 +146,22 @@ install *.dll $RPM_BUILD_ROOT%{_dlldir}
 %{target}-strip -g -R.comment -R.note $RPM_BUILD_ROOT%{_libdir}/*.a
 %endif
 
+# for compatibility
+ln -sf libbz2.a $RPM_BUILD_ROOT%{_libdir}/libbzip2.a
+ln -sf libbz2.dll.a $RPM_BUILD_ROOT%{_libdir}/libbzip2.dll.a
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%{_libdir}/libbz2.dll.a
 %{_libdir}/libbzip2.dll.a
 %{_includedir}/bzlib*.h
 
 %files static
 %defattr(644,root,root,755)
+%{_libdir}/libbz2.a
 %{_libdir}/libbzip2.a
 
 %files dll
