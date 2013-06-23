@@ -35,6 +35,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # arch-specific flags (like alpha's -mieee) are not valid for i386 gcc
 %define		optflags	-O2
 %endif
+# -z options are invalid for mingw linker, most of -f options are Linux-specific
+%define		filterout_ld	-Wl,-z,.*
+%define		filterout_c	-f[-a-z0-9=]*
 
 %description
 Bzip2 compresses files using the Burrows-Wheeler block-sorting text
@@ -115,23 +118,11 @@ Group:		Applications/Emulators
 %patch0 -p1
 
 %build
-AR=%{target}-ar
-RANLIB=%{target}-ranlib
-
 %{__make} \
-	AR="$AR" \
-	RANLIB="$RANLIB" \
+	AR="%{target}-ar" \
+	RANLIB="%{target}-ranlib" \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -Wall \$(BIGFILES)"
-
-# makefile made libbz2.a as DLL import library...
-# recreate libbz2.dll.a as import library and libbz2.a as static
-%{__rm} libbz2.a libbz2.dll
-
-OBJS="blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o"
-$AR cru libbz2.a $OBJS
-$RANLIB libbz2.a
-%{target}-dllwrap --def libbz2.def --implib libbz2.dll.a -o bzip2.dll $OBJS
 
 %install
 rm -rf $RPM_BUILD_ROOT

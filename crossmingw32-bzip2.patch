@@ -65,9 +65,9 @@ diff -uNr bzip2-1.0.1/libbz2.def bzip2-1.0.1.good/libbz2.def
 +	BZ2_bzflush@4
 +	BZ2_bzclose@4
 +	BZ2_bzerror@8
---- bzip2-1.0.2/Makefile.orig	2002-01-26 00:34:53.000000000 +0100
-+++ bzip2-1.0.2/Makefile	2003-12-01 23:22:57.502761240 +0100
-@@ -23,7 +23,7 @@
+--- bzip2-1.0.6/Makefile.orig	2010-09-11 00:46:02.000000000 +0200
++++ bzip2-1.0.6/Makefile	2013-06-23 09:39:59.263591821 +0200
+@@ -35,7 +35,7 @@
        decompress.o \
        bzlib.o
  
@@ -76,17 +76,17 @@ diff -uNr bzip2-1.0.1/libbz2.def bzip2-1.0.1.good/libbz2.def
  
  bzip2: libbz2.a bzip2.o
  	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2 bzip2.o -L. -lbz2
-@@ -33,12 +33,7 @@
- 
+@@ -46,11 +46,8 @@
  libbz2.a: $(OBJS)
  	rm -f libbz2.a
--	$(AR) cq libbz2.a $(OBJS)
+ 	$(AR) cq libbz2.a $(OBJS)
 -	@if ( test -f $(RANLIB) -o -f /usr/bin/ranlib -o \
 -		-f /bin/ranlib -o -f /usr/ccs/bin/ranlib ) ; then \
 -		echo $(RANLIB) libbz2.a ; \
 -		$(RANLIB) libbz2.a ; \
 -	fi
-+	i386-mingw32-dllwrap --def libbz2.def --implib libbz2.a -o libbz2.dll $(OBJS)
++	$(RANLIB) libbz2.a
++	$(CC) -shared $(LDFLAGS) -Wl,--enable-auto-image-base -Wl,--add-stdcall-alias -Wl,--out-implib,libbz2.dll.a -o bzip2.dll libbz2.def $(OBJS)
  
  check: test
  test: bzip2
