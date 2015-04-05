@@ -8,7 +8,7 @@ Summary(uk.UTF-8):	Компресор файлів на базі алгорит�
 Summary(ru.UTF-8):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
 Version:	1.0.6
-Release:	2
+Release:	3
 License:	BSD-like
 Group:		Applications/Archiving
 Source0:	http://www.bzip.org/%{version}/%{realname}-%{version}.tar.gz
