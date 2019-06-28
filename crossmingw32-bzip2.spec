@@ -7,14 +7,14 @@ Summary(pt_BR.UTF-8):	Compactador de arquivo extremamente poderoso
 Summary(uk.UTF-8):	Компресор файлів на базі алгоритму блочного сортування
 Summary(ru.UTF-8):	Компрессор файлов на основе алгоритма блочной сортировки
 Name:		crossmingw32-%{realname}
-Version:	1.0.6
-Release:	3
+Version:	1.0.7
+Release:	1
 License:	BSD-like
 Group:		Applications/Archiving
-Source0:	http://www.bzip.org/%{version}/%{realname}-%{version}.tar.gz
-# Source0-md5:	00b516f4704d4a7cb50a1d97e6e8e15b
+Source0:	https://sourceware.org/pub/bzip2/%{realname}-%{version}.tar.gz
+# Source0-md5:	1a6a61cc867be4f3d6549037a09bf13e
 Patch0:		%{name}.patch
-URL:		http://www.bzip.org/
+URL:		https://sourceware.org/bzip2/
 BuildRequires:	crossmingw32-gcc
 Requires:	crossmingw32-runtime
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
