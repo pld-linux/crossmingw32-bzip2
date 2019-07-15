@@ -1,15 +1,3 @@
-diff -uNr bzip2-1.0.1/bzip2.c bzip2-1.0.1.good/bzip2.c
---- bzip2-1.0.1/bzip2.c	2000-04-25 23:34:06.000000000 +0200
-+++ bzip2-1.0.1.good/bzip2.c	2003-08-27 16:20:48.932133328 +0200
-@@ -211,7 +211,7 @@
- #if BZ_LCCWIN32
- #   include <io.h>
- #   include <fcntl.h>
--#   include <sys\stat.h>
-+#   include <sys/stat.h>
- 
- #   define NORETURN       /**/
- #   define PATH_SEP       '\\'
 diff -uNr bzip2-1.0.1/libbz2.def bzip2-1.0.1.good/libbz2.def
 --- bzip2-1.0.1/libbz2.def	2000-05-16 23:35:52.000000000 +0200
 +++ bzip2-1.0.1.good/libbz2.def	2003-08-27 16:20:03.627020752 +0200
